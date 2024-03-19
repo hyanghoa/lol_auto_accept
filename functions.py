@@ -11,9 +11,7 @@ TITLE = "League of Legends"
 
 def capture_window(hwnd):
     # 윈도우 핸들을 사용하여 윈도우의 좌표 및 크기 가져오기
-    left, top, right, bot = win32gui.GetClientRect(hwnd)
-    width = right - left
-    height = bot - top
+    _, _, width, height = get_window_placement(hwnd)
 
     # 윈도우의 디바이스 컨텍스트 생성
     hdc = win32gui.GetDC(hwnd)
@@ -77,24 +75,20 @@ def find_accept_button(screenshot):
         return None
 
 
-def click_accept_button(coordinate):
-    left, top = get_window_rect(TITLE)
+def click_accept_button(hwnd, coordinate):
+    left, top, _, _ = get_window_placement(hwnd)
     pyautogui.click(
         left + coordinate[0],
         top + coordinate[1],
     )
 
 
-def get_window_rect(window_title):
-    hwnd = win32gui.FindWindow(None, window_title)  # 창 제목으로부터 핸들을 가져옴
-    if hwnd == 0:
-        print("창을 찾을 수 없습니다.")
-        return None
-    rect = win32gui.GetWindowRect(hwnd)  # 창의 전체 영역의 좌표를 가져옴
-    left, top, right, bottom = rect
+def get_window_placement(hwnd):
+    placement = win32gui.GetWindowPlacement(hwnd)
+    left, top, right, bottom = placement[-1]
     width = right - left
     height = bottom - top
-    return left, top
+    return left, top, width, height
 
 
 def main():
@@ -108,7 +102,7 @@ def main():
         if coordinate is not None:
             win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)  # 최소화되어 있을 경우 창을 복원합니다.
             win32gui.SetForegroundWindow(hwnd)  # 창을 활성화합니다.
-            click_accept_button(coordinate)
+            click_accept_button(hwnd, coordinate)
             return True
 
 
