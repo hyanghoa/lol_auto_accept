@@ -2,7 +2,7 @@ import os, sys
 import cv2
 import pyautogui
 import numpy as np
-import win32gui, win32con, win32ui, win32api, win32com.client
+import win32gui, win32con, win32ui, win32com.client
 
 shell = win32com.client.Dispatch("WScript.Shell")
 shell.SendKeys("%")
@@ -53,7 +53,6 @@ def resource_path(relative_path):
 def find_accept_button(screenshot):
     # 매칭 수락 버튼 이미지
     screenshot = cv2.cvtColor(screenshot, cv2.COLOR_BGRA2GRAY)
-    screenshot = cv2.imread(resource_path("accept.png"), cv2.IMREAD_GRAYSCALE)
     template = cv2.imread(resource_path("accept_button.png"), cv2.IMREAD_GRAYSCALE)
 
     # 템플릿 이미지의 높이와 너비 가져오기
