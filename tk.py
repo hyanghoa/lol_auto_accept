@@ -33,15 +33,12 @@ class App(customtkinter.CTk):
         self.button.place(relx=0.5, rely=0.5, anchor=customtkinter.CENTER)
 
     def center_window(self):
-        # 화면의 너비와 높이를 구합니다
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
 
-        # 창의 x, y 좌표를 계산합니다
         x = (screen_width - self.window_width) // 2
         y = (screen_height - self.window_height) // 2
 
-        # 창의 위치를 설정합니다
         self.geometry(f"{self.window_width}x{self.window_height}+{x}+{y}")
 
     def toggle_button(self):
