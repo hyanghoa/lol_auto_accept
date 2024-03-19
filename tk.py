@@ -2,11 +2,18 @@ import time
 import tkinter as tk
 import utils
 import functions
+import customtkinter
 
 
-class App(tk.Tk):
+customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
+customtkinter.set_default_color_theme(
+    "blue"
+)  # Themes: blue (default), dark-blue, green
+
+
+class App(customtkinter.CTk):
     def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
+        customtkinter.CTk.__init__(self, *args, **kwargs)
         self.title("매칭 자동 수락")
         self.accept_text = "자동 수락 시작"
         self.wait_text = "매칭 자동 수락을 하려면 자동 수락 시작 버튼을 클릭하세요!"
@@ -15,13 +22,15 @@ class App(tk.Tk):
         self.center_window()
         self.thread = None
 
-        self.label = tk.Label(self, text=self.wait_text, padx=10, pady=10)
+        self.label = customtkinter.CTkLabel(master=self, text=self.wait_text)
         self.label.place(relx=0.5, rely=0.4, anchor="center")
 
-        self.button = tk.Button(
-            self, text=self.accept_text, padx=10, pady=5, command=self.toggle_button
+        self.button = customtkinter.CTkButton(
+            master=self,
+            text=self.accept_text,
+            command=self.toggle_button,
         )
-        self.button.place(relx=0.5, rely=0.6, anchor="center")
+        self.button.place(relx=0.5, rely=0.5, anchor=customtkinter.CENTER)
 
     def center_window(self):
         # 화면의 너비와 높이를 구합니다
@@ -36,23 +45,23 @@ class App(tk.Tk):
         self.geometry(f"{self.window_width}x{self.window_height}+{x}+{y}")
 
     def toggle_button(self):
-        if self.button.config("text")[-1] == self.accept_text:
-            self.button.config(text="취소")
-            self.label.config(text="수락 대기중...")
-            self.button.config(state=tk.NORMAL)
+        if self.button.cget("text") == self.accept_text:
+            self.button.configure(text="취소")
+            self.label.configure(text="수락 대기중...")
+            self.button.configure(state=tk.NORMAL)
             self.thread = self.start_thread(
                 target=functions.main, callback=self.callback_function
             )
         else:
-            self.button.config(text=self.accept_text)
-            self.label.config(text=self.wait_text)
-            self.button.config(state=tk.NORMAL)
+            self.button.configure(text=self.accept_text)
+            self.label.configure(text=self.wait_text)
+            self.button.configure(state=tk.NORMAL)
             self.thread.flag.set()
 
     def callback_function(self):
-        self.button.config(text=self.accept_text)
-        self.label.config(text=self.wait_text)
-        self.button.config(state=tk.NORMAL)
+        self.button.configure(text=self.accept_text)
+        self.label.configure(text=self.wait_text)
+        self.button.configure(state=tk.NORMAL)
         self.thread.flag.set()
 
     def start_thread(self, target, callback=None):
