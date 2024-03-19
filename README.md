@@ -4,6 +4,16 @@
 
 잠깐 다른 일을 봐야 할 떄 자동으로 수락을 눌러주는 프로그램 입니다.
 
+[다운로드 링크](https://github.com/hyanghoa/lol_auto_accept/releases)
+
+<br>
+
+## <div align="center">실행 화면</div>
+
+<div align="center">
+    <img width="480" src="./readme/images/run_sample.png" alt="run example">
+</div>
+
 <br>
 
 ## <div align="center">설치 방법</div>
@@ -23,11 +33,3 @@ pyinstaller를 사용한 exe 실행 파일을 만드려면 아래 명령어를 �
 ```bash
 pyinstaller --onefile --noconsole --add-data accept_button.png:. --name lol_auto_accept tk.py
 ```
-
-<br>
-
-## <div align="center">실행 화면</div>
-
-<div align="center">
-    <img width="480" src="./readme/images/run_sample.png" alt="run example">
-</div>
