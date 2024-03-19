@@ -1,2 +1,6 @@
 __pycache__
 *_env
+build
+dist
+*.sh
+*.spec
