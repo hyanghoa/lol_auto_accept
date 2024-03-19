@@ -2,10 +2,11 @@ import os, sys
 import cv2
 import pyautogui
 import numpy as np
-import win32gui, win32con, win32ui, win32com.client
+import win32gui, win32con, win32ui, win32api, win32com.client
 
 shell = win32com.client.Dispatch("WScript.Shell")
-shell.SendKeys('%')
+shell.SendKeys("%")
+TITLE = "League of Legends"
 
 
 def capture_window(hwnd):
@@ -29,7 +30,7 @@ def capture_window(hwnd):
 
     # 화면 내용을 numpy 배열로 변환
     signedIntsArray = saveBitMap.GetBitmapBits(True)
-    img = np.fromstring(signedIntsArray, dtype='uint8')
+    img = np.fromstring(signedIntsArray, dtype="uint8")
     img.shape = (height, width, 4)
 
     # 메모리 해제
@@ -40,6 +41,7 @@ def capture_window(hwnd):
 
     return img
 
+
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -47,10 +49,11 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
+
 def find_accept_button(screenshot):
     # 매칭 수락 버튼 이미지
     screenshot = cv2.cvtColor(screenshot, cv2.COLOR_BGRA2GRAY)
-    
+    screenshot = cv2.imread(resource_path("accept.png"), cv2.IMREAD_GRAYSCALE)
     template = cv2.imread(resource_path("accept_button.png"), cv2.IMREAD_GRAYSCALE)
 
     # 템플릿 이미지의 높이와 너비 가져오기
@@ -67,18 +70,38 @@ def find_accept_button(screenshot):
         top_left = max_loc
         bottom_right = (top_left[0] + template_width, top_left[1] + template_height)
 
-        return (bottom_right[0] + top_left[0]) // 2 , (bottom_right[1] + top_left[1]) // 2
+        return (bottom_right[0] + top_left[0]) // 2, (
+            bottom_right[1] + top_left[1]
+        ) // 2
 
     else:
         return None
 
+
 def click_accept_button(coordinate):
-    pyautogui.click(coordinate[0]+350, coordinate[1]+150)
+    left, top = get_window_rect(TITLE)
+    pyautogui.click(
+        left + coordinate[0],
+        top + coordinate[1],
+    )
+
+
+def get_window_rect(window_title):
+    hwnd = win32gui.FindWindow(None, window_title)  # 창 제목으로부터 핸들을 가져옴
+    if hwnd == 0:
+        print("창을 찾을 수 없습니다.")
+        return None
+    rect = win32gui.GetWindowRect(hwnd)  # 창의 전체 영역의 좌표를 가져옴
+    left, top, right, bottom = rect
+    width = right - left
+    height = bottom - top
+    return left, top
+
 
 def main():
     # "게임 클라이언트"라는 제목을 가진 창의 핸들 얻기
-    hwnd = win32gui.FindWindow(None, "League of Legends")
-    
+    hwnd = win32gui.FindWindow(None, TITLE)
+
     # 창의 내용 캡처
     if hwnd:
         screenshot = capture_window(hwnd)
@@ -88,6 +111,7 @@ def main():
             win32gui.SetForegroundWindow(hwnd)  # 창을 활성화합니다.
             click_accept_button(coordinate)
             return True
+
 
 if __name__ == "__main__":
     main()
